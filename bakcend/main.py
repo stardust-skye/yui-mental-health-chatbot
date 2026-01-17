@@ -93,26 +93,41 @@ class GeminiSafetyResponse(BaseModel):
 
 def process_analytics_and_log(user_id: str, chat_id: str, user_text: str, full_history: list, trigger: str):
     try:
-        # Step A: Get Emotion via Hugging Face
-        # DistilRoBERTa returns a list of labels and scores
+        # Step A: Emotion detection (Hugging Face)
         results = hf_client.text_classification(user_text, model=EMOTION_MODEL)
-        # Get the label with the highest score
         top_emotion = max(results, key=lambda x: x['score'])
 
-        # Step B: Log to Firestore (Admin SDK)
-        # We update the existing chat document with the final history and latest emotion
+        # Current time
+        now = datetime.utcnow()
+        day = now.strftime("%Y-%m-%d")
+        week = now.strftime("%Y-W%U")
+
+        # Step B1: Update chat document (existing behavior)
         db.collection("chats").document(chat_id).set({
             "userId": user_id,
             "messages": full_history,
-            "lastUpdated": datetime.utcnow(),
-            "latestEmotion": top_emotion['label'],
+            "lastUpdated": now,
+            "latestEmotion": top_emotion["label"].lower(),
             "latestTrigger": trigger,
-            "emotionScore": top_emotion['score'],
+            "emotionScore": float(top_emotion["score"]),
             "preview": user_text[:40] + "..."
         }, merge=True)
 
+        # Step B2: 🔥 ADD MOOD LOG (THIS IS NEW + REQUIRED)
+        db.collection("mood_logs").add({
+            "userId": user_id,
+            "chatId": chat_id,
+            "emotion": top_emotion["label"].lower(),
+            "score": float(top_emotion["score"]),
+            "trigger": trigger,
+            "timestamp": now,
+            "day": day,
+            "week": week
+        })
+
         print(
-            f"✅ Analytics Logged: {top_emotion['label']} ({top_emotion['score']:.2f})")
+            f"✅ Mood Logged: {top_emotion['label']} ({top_emotion['score']:.2f})")
+
     except Exception as e:
         print(f"❌ Analytics/Logging Error: {e}")
 
@@ -136,12 +151,11 @@ def process_analytics_and_log(user_id: str, chat_id: str, user_text: str, full_h
 #         })
 #     except Exception as e:
 #         print(f"Logging Error: {e}")
-
 THERAPIST_PROMPT = """
-You are an empathetic, compassionate, and non-judgmental mental health therapist. 
-Your goal is to provide emotional support, validate the user's feelings, and offer 
-therapeutic reflections using techniques like Active Listening and Cognitive Reframing. 
-DO NOT give clinical diagnoses or purely technical career advice unless asked to help 
+You are an empathetic, compassionate, and non-judgmental mental health therapist.
+Your goal is to provide emotional support, validate the user's feelings, and offer
+therapeutic reflections using techniques like Active Listening and Cognitive Reframing.
+DO NOT give clinical diagnoses or purely technical career advice unless asked to help
 with a specific coping strategy for work stress. Always maintain a gentle, supportive tone.
 """
 
@@ -151,7 +165,7 @@ async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks)
     try:
         # 1. Update the Prompt to demand JSON
         SAFETY_INSTRUCTION = """
-        Analyze the user's message for crisis/self-harm. 
+        Analyze the user's message for crisis/self-harm.
         Return a JSON object:
         {
           "response": "Your empathetic therapeutic reply",
@@ -192,22 +206,20 @@ async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks)
         updated_history = [m.dict() for m in request.messages]
         updated_history.append({"role": "model", "content": ai_text})
 
+        # ✅ FIX chat_id ONCE, BEFORE USING IT
+        chat_id = request.chat_id
+        if chat_id == "temp":
+           chat_id = f"chat_{request.user_id}"
+       
         if request.user_id != "guest":
-            background_tasks.add_task(
-                process_analytics_and_log,
-                request.user_id,
-                request.chat_id,
-                request.messages[-1].content,
-                updated_history,
-                trigger  # Pass the trigger Gemini found to your analytics function!
-            )
-
-        # 6. Return the structured response to Frontend
-        return {
-            "response": ai_text,
-            "is_emergency": is_emergency,
-            "trigger": trigger
-        }
+           background_tasks.add_task(
+             process_analytics_and_log,
+             request.user_id,               # ✅ Firebase UID
+             chat_id,                       # ✅ FIXED chat id
+             request.messages[-1].content,
+             updated_history,
+             trigger
+    )
 
     except Exception as e:
         print(f"Error: {e}")

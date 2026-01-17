@@ -1,78 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import { db } from '../firebase';
-import { collection, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import { MessageSquarePlus, Clock, MessageSquare } from 'lucide-react';
+import React from 'react';
+import { Wind, PlayCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const Sidebar = ({ user, activeChatId, setActiveChatId }) => {
-  const [history, setHistory] = useState([]);
-
-  useEffect(() => {
-    if (!user || user === 'guest') return;
-
-    // We query by lastUpdated to keep the newest chats at the top
-    const q = query(
-      collection(db, "chats"),
-      where("userId", "==", user.uid),
-      orderBy("lastUpdated", "desc"),
-      limit(20)
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const chats = snapshot.docs.map(doc => ({ 
-        id: doc.id, 
-        ...doc.data() 
-      }));
-      setHistory(chats);
-    });
-
-    return () => unsubscribe();
-  }, [user]);
-
-  // Helper to format the Firestore timestamp nicely
-  const formatDate = (timestamp) => {
-    if (!timestamp) return "";
-    const date = timestamp.toDate();
-    return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-  };
+const Sidebar = ({ isCollapsed }) => {
+  const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 border-r border-gray-200 w-64 p-4">
-      <button 
-        onClick={() => setActiveChatId(null)}
-        className="flex items-center gap-2 w-full p-3 mb-6 bg-white border border-gray-200 rounded-xl text-gray-700 font-medium hover:bg-gray-100 transition-all shadow-sm"
+    <div className="space-y-2">
+
+      {/* SECTION TITLE */}
+      {!isCollapsed && (
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest px-3 mb-2">
+          Wellness Tools
+        </p>
+      )}
+
+      {/* BREATHING EXERCISE */}
+      <button
+        onClick={() => navigate('/breathing')}
+        className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all
+          hover:bg-indigo-50 text-gray-700
+          ${isCollapsed ? 'justify-center' : ''}`}
       >
-        <MessageSquarePlus size={18} className="text-indigo-600" />
-        New Chat
+        <Wind size={20} className="text-indigo-600 shrink-0" />
+
+        {!isCollapsed && (
+          <div className="text-left">
+            <p className="text-sm font-medium">Breathing Exercise</p>
+            <p className="text-[11px] text-gray-500">Slow your breath</p>
+          </div>
+        )}
       </button>
 
-      <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest px-2 mb-4">
-        Recent History
-      </div>
+      {/* CALMING VIDEOS */}
+      <button
+        onClick={() => navigate('/videos')}
+        className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all
+          hover:bg-emerald-50 text-gray-700
+          ${isCollapsed ? 'justify-center' : ''}`}
+      >
+        <PlayCircle size={20} className="text-emerald-600 shrink-0" />
 
-      <div className="flex-1 overflow-y-auto space-y-1">
-        {history.map(chat => (
-          <button
-            key={chat.id}
-            onClick={() => setActiveChatId(chat.id)}
-            className={`w-full group flex items-center gap-3 p-3 rounded-xl transition-all ${
-              activeChatId === chat.id 
-                ? 'bg-indigo-50 text-indigo-700 border border-indigo-100' 
-                : 'hover:bg-gray-200 text-gray-600'
-            }`}
-          >
-            <MessageSquare size={16} className={activeChatId === chat.id ? 'text-indigo-600' : 'text-gray-400'} />
-            <div className="flex-1 text-left truncate">
-              {/* USING THE PREVIEW FIELD FROM FIREBASE */}
-              <p className="text-sm font-medium truncate">
-                {chat.preview || "New Session"}
-              </p>
-              <p className="text-[10px] opacity-60">
-                {formatDate(chat.lastUpdated)}
-              </p>
-            </div>
-          </button>
-        ))}
-      </div>
+        {!isCollapsed && (
+          <div className="text-left">
+            <p className="text-sm font-medium">Calming Videos</p>
+            <p className="text-[11px] text-gray-500">Rain • Ocean • Music</p>
+          </div>
+        )}
+      </button>
+
     </div>
   );
 };

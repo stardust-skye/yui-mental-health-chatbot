@@ -13,6 +13,9 @@ import Sidebar from './components/Sidebar';
 import ChatWindow from './components/ChatWindow';
 import Dashboard from './components/Dashboard';
 import YuiOrb from "./components/YuiOrb";
+import Breathing from './components/Breathing';
+import Videos from './components/Videos';
+
 
 
 // --- LANDING PAGE --- (Keep your existing LandingPage component here)
@@ -64,7 +67,7 @@ const LandingPage = ({ onGoogleLogin, onGuestLogin }) => (
 
         <div className="flex-1 hidden md:block">
           <div className="bg-indigo-100 w-full h-96 rounded-3xl flex items-center justify-center border-4 border-white shadow-2xl overflow-hidden relative">
-            
+
             <YuiOrb theme="light" />
           </div>
         </div>
@@ -221,9 +224,14 @@ function App() {
                       <SidebarLink to="/chat" icon={<MessageSquare size={20} />} label="Chat" isCollapsed={isCollapsed} />
                       <SidebarLink to="/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" isCollapsed={isCollapsed} />
 
-                      <div className={`pt-4 mt-4 border-t transition-opacity ${isCollapsed ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
-                        <Sidebar user={user} setActiveChatId={setActiveChatId} />
+                      <div className="pt-4 mt-4 border-t">
+                        <Sidebar
+                          isCollapsed={isCollapsed}
+                          onBreathingOpen={() => setShowBreathing(true)}
+                          onCalmVideosOpen={() => setShowCalmVideos(true)}
+                        />
                       </div>
+
                     </nav>
 
                     {/* User Profile Area */}
@@ -277,10 +285,29 @@ function App() {
 
                 <div className="flex-1 overflow-auto">
                   <Routes>
-                    <Route path="/chat" element={<ChatWindow user={user} activeChatId={activeChatId} setActiveChatId={setActiveChatId} />} />
-                    <Route path="/dashboard" element={<Dashboard user={user} />} />
+                    <Route
+                      path="/chat"
+                      element={<ChatWindow user={user} activeChatId={activeChatId} setActiveChatId={setActiveChatId} />}
+                    />
+
+                    <Route
+                      path="/dashboard"
+                      element={<Dashboard user={user} />}
+                    />
+
+                    {/* NEW WELLNESS ROUTES */}
+                    <Route
+                      path="/breathing"
+                      element={<Breathing />}
+                    />
+
+                    <Route
+                      path="/videos"
+                      element={<Videos />}
+                    />
                   </Routes>
                 </div>
+
               </main>
             </div>
           ) : <Navigate to="/" />
