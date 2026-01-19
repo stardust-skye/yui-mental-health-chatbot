@@ -47,12 +47,21 @@ const Dashboard = ({ user }) => {
     const fetchAnalytics = async () => {
       const q = query(
         collection(db, "mood_logs"),
-        where("userId", "==", user.uid),
-        orderBy("timestamp", "asc")
+        where("userId", "==", user.uid)
       );
 
       const snapshot = await getDocs(q);
-      const logs = snapshot.docs.map(doc => doc.data());
+
+      const logs = snapshot.docs
+        .map(doc => doc.data())
+        .sort((a, b) => {
+          if (!a.timestamp || !b.timestamp) return 0;
+          return a.timestamp.toMillis() - b.timestamp.toMillis();
+        });
+
+      console.log("🔥 FETCHED LOGS:", logs);
+
+
 
       if (logs.length === 0) {
         setDailyData([]);
@@ -89,11 +98,11 @@ const Dashboard = ({ user }) => {
 
       /* -------- WEEKLY (AVG PER DAY) -------- */
       const dayMap = {};
+
       logs.forEach(l => {
-        if (!l.timestamp) return;
-        const day = l.timestamp.toDate().toLocaleDateString();
-        if (!dayMap[day]) dayMap[day] = [];
-        dayMap[day].push((l.score || 0.5) * 10);
+        if (!l.day) return;
+        if (!dayMap[l.day]) dayMap[l.day] = [];
+        dayMap[l.day].push((l.score || 0.5) * 10);
       });
 
       setWeeklyData(
@@ -102,6 +111,7 @@ const Dashboard = ({ user }) => {
           score: scores.reduce((a, b) => a + b, 0) / scores.length
         }))
       );
+
 
       /* -------- RECENT EMOTION -------- */
       setRecentEmotion(logs.at(-1)?.emotion || "—");
