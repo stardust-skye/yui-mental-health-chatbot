@@ -47,7 +47,7 @@ const BreathingExercise = ({ onDismiss }) => {
             href="tel:988" 
             className="flex items-center justify-center gap-3 w-full bg-red-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:bg-red-700 transition-all"
           >
-            <Phone size={20} /> Call 988 (Crisis Line)
+            <Phone size={20} /> Call 14416 (Crisis Line)
           </a>
           <button 
             onClick={() => window.open('https://www.crisistextline.org/', '_blank')}

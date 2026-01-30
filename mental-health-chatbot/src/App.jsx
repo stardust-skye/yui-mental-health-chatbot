@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 
-// Import your components
+// Importing components
 import Sidebar from './components/Sidebar';
 import ChatWindow from './components/ChatWindow';
 import Dashboard from './components/Dashboard';
@@ -17,8 +17,6 @@ import Breathing from './components/Breathing';
 import Videos from './components/Videos';
 
 
-
-// --- LANDING PAGE --- (Keep your existing LandingPage component here)
 // --- LANDING PAGE COMPONENT ---
 
 const LandingPage = ({ onGoogleLogin, onGuestLogin }) => (
