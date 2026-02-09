@@ -80,11 +80,13 @@ const ChatWindow = ({ user }) => {
     setIsTyping(true);
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/chat", {
-        chat_id: chatId,
-        user_id: chatId,
-        messages: newMessages
-      });
+      /* const response = await axios.post("http://127.0.0.1:8000/chat", */
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat`,
+        {
+          chat_id: chatId,
+          user_id: chatId,
+          messages: newMessages
+        });
 
       if (response.data.is_emergency) {
         setShowCrisisModal(true);
