@@ -80,6 +80,15 @@ const ChatWindow = ({ user }) => {
     setInput("");
     setIsTyping(true);
 
+    // show wakeup message for first response
+    if (messages.length <= 1) {
+      setMessages(prev => [
+        ...prev,
+        { role: "model", content: "⚡ Waking up AI brain… first reply may take ~15s" }
+      ]);
+    }
+
+
     try {
       /* const response = await axios.post("http://127.0.0.1:8000/chat",*/
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat`, {
