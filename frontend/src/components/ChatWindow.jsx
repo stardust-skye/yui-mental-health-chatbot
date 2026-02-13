@@ -18,7 +18,8 @@ const ChatWindow = ({ user }) => {
   const [showCrisisModal, setShowCrisisModal] = useState(false);
   const scrollRef = useRef(null);
 
-  const chatId = user?.uid;
+  const chatId = user?.uid || "guest";
+
 
   /* LOAD CHAT (SAFE) */
   useEffect(() => {
@@ -81,12 +82,12 @@ const ChatWindow = ({ user }) => {
 
     try {
       /* const response = await axios.post("http://127.0.0.1:8000/chat",*/
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat`,
-        {
-          chat_id: chatId,
-          user_id: chatId,
-          messages: newMessages
-        });
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat`, {
+        chat_id: chatId || "guest",
+        user_id: chatId || "guest",
+        messages: newMessages
+      });
+
 
       if (response.data.is_emergency) {
         setShowCrisisModal(true);

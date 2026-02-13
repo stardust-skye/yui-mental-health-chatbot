@@ -251,25 +251,29 @@ async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks)
         updated_history.append({"role": "model", "content": ai_text})
 
         # ✅ FIX chat_id ONCE, BEFORE USING IT
+        # fix chat_id once
         chat_id = request.chat_id
         if chat_id == "temp":
             chat_id = f"chat_{request.user_id}"
 
+        # Only log for real users (not guest)
         if request.user_id != "guest":
             background_tasks.add_task(
                 process_analytics_and_log,
-                request.user_id,               # ✅ Firebase UID
-                chat_id,                       # ✅ FIXED chat id
+                request.user_id,
+                chat_id,
                 request.messages[-1].content,
                 updated_history,
                 trigger
             )
 
-            return {
-                "response": ai_text,
-                "is_emergency": is_emergency,
-                "detected_trigger": trigger
-            }
+        # ALWAYS return response (guest + logged users)
+        return {
+            "response": ai_text,
+            "is_emergency": is_emergency,
+            "detected_trigger": trigger
+        }
+
 
     except Exception as e:
         print(f"Error: {e}")
