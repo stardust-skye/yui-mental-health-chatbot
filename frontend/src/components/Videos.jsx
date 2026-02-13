@@ -61,6 +61,7 @@ const Videos = () => {
         <p className="text-gray-600 text-lg">
           Choose a soundscape. Let it play in the background while you rest,
           breathe, or think.
+          All videos belong to their respective creators on YouTube. Used for wellness support purposes.
         </p>
       </div>
 
@@ -98,10 +99,9 @@ const Videos = () => {
               key={video.id}
               className={`
                 relative p-6 rounded-2xl border bg-white transition-all
-                ${
-                  isActive
-                    ? "border-emerald-500 shadow-lg scale-[1.02]"
-                    : "border-gray-200 hover:shadow-md hover:-translate-y-0.5"
+                ${isActive
+                  ? "border-emerald-500 shadow-lg scale-[1.02]"
+                  : "border-gray-200 hover:shadow-md hover:-translate-y-0.5"
                 }
               `}
             >

@@ -42,6 +42,8 @@ const LandingPage = ({ onGoogleLogin, onGuestLogin }) => (
             In a world that never stops, Yui provides a safe, anonymous space to express your feelings,
 
             track your emotional trends, and receive guidance rooted in empathy.
+            YUI is an AI emotional support companion and not a licensed therapist.
+            User conversations are stored securely and privately.
 
           </p>
 
