@@ -33,7 +33,7 @@ const LandingPage = ({ onGoogleLogin, onGuestLogin }) => (
 
           <h1 className="text-6xl font-extrabold text-indigo-950 mb-6 leading-tight">
 
-            Meet Yui, <span className="text-indigo-600">your AI therapist.</span>
+            Meet Yui, <span className="text-indigo-600">your private AI emotional wellness space.</span>
 
           </h1>
 
