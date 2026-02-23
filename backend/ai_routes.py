@@ -1,22 +1,18 @@
 from AI_ENGINE.yui_core import run_call_session, stop_recording
-from fastapi import APIRouter
+from fastapi import APIRouter, UploadFile, File
 import os
 import threading
 from google import genai
 from dotenv import load_dotenv
-
 import cv2
+import numpy as np
 from AI_ENGINE.face_model.face_emotion import get_face_emotion
 
-latest_face_emotion = "Neutral"
-face_camera_running = False
-
 load_dotenv()
-
 router = APIRouter()
 
 # ===============================
-# GEMINI SAFE INIT (no crash if key missing)
+# GEMINI SAFE INIT
 # ===============================
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 
@@ -35,16 +31,40 @@ MODEL_ID = "gemini-2.5-flash-lite"
 session_result = {}
 recording_thread = None
 
+# ===============================
+# 🎥 FACE EMOTION FROM FRONTEND FRAME
+# ===============================
+
+
+@router.post("/face/emotion")
+async def detect_face(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
+
+        npimg = np.frombuffer(contents, np.uint8)
+        frame = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
+
+        emotion = get_face_emotion(frame)
+
+        if not emotion:
+            emotion = "Neutral"
+
+        return {"face_emotion": emotion}
+
+    except Exception as e:
+        print("Face API error:", e)
+        return {"face_emotion": "Neutral"}
 
 # ===============================
-# START CALL (start recording)
+# START CALL (mic start)
 # ===============================
+
+
 @router.post("/call/start")
 async def start_call():
     global recording_thread, session_result
 
     print("🎤 START recording requested")
-
     session_result = {}
 
     def run():
@@ -56,20 +76,19 @@ async def start_call():
 
     return {"status": "recording_started"}
 
-
 # ===============================
 # STOP CALL + PROCESS
 # ===============================
+
+
 @router.post("/call/stop")
 async def stop_call():
     global recording_thread, session_result
 
     print("🛑 STOP requested")
 
-    # send stop signal to mic loop
     stop_recording()
 
-    # wait for recording thread to finish
     if recording_thread:
         recording_thread.join()
 
@@ -94,7 +113,6 @@ Text: {text_emotion}
 Respond like a warm emotional support AI friend.
 Short, human, caring.
 """
-
         try:
             response = client.models.generate_content(
                 model=MODEL_ID,

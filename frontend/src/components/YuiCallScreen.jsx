@@ -21,8 +21,44 @@ const YuiCallScreen = () => {
     useEffect(() => {
         startCamera();
 
+        const interval = setInterval(async () => {
+            if (!videoRef.current) return;
+
+            try {
+                const canvas = document.createElement("canvas");
+                canvas.width = videoRef.current.videoWidth;
+                canvas.height = videoRef.current.videoHeight;
+
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(videoRef.current, 0, 0);
+
+                const blob = await new Promise(resolve =>
+                    canvas.toBlob(resolve, "image/jpeg")
+                );
+
+                const formData = new FormData();
+                formData.append("file", blob, "frame.jpg");
+
+                const res = await fetch("http://localhost:8000/face/emotion", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await res.json();
+
+                if (data.face_emotion) {
+                    setFaceEmotion(data.face_emotion);
+                }
+
+            } catch (err) {
+                console.log("Face detection error");
+            }
+
+        }, 1000); // every 1 second
+
         return () => {
             stopCamera();
+            clearInterval(interval);
         };
     }, []);
 
@@ -53,9 +89,9 @@ const YuiCallScreen = () => {
     // ================= START SESSION =================
     const startSession = async () => {
         setGeminiReply("I'm listening… speak now.");
-        setFaceEmotion("Listening...");
+        setFaceEmotion("Observing...");
         setSpeechEmotion("Listening...");
-        setTextEmotion("Listening...");
+        setTextEmotion("Reading...");
 
         try {
             console.log("STARTING RECORDING");
@@ -133,10 +169,10 @@ const YuiCallScreen = () => {
     };
 
     return (
-        <div className="w-screen h-screen flex bg-[#0f1117] text-white">
+        <div className="w-full h-screen flex bg-[#0f1117] text-white overflow-x-hidden">
 
             {/* ================= LEFT CAMERA ================= */}
-            <div className="w-[70%] h-full relative bg-black flex items-center justify-center">
+            <div className="flex-[1.2] h-full relative bg-black flex items-center justify-center">
 
                 <video
                     ref={videoRef}
@@ -172,7 +208,7 @@ const YuiCallScreen = () => {
             </div>
 
             {/* ================= RIGHT CHAT ================= */}
-            <div className="w-[30%] h-full bg-[#161a23] flex flex-col border-l border-gray-800">
+            <div className="flex-1 h-full bg-[#161a23] flex flex-col border-l border-gray-800">
 
                 <div className="p-5 border-b border-gray-800">
                     <h1 className="text-xl font-bold">YUI Companion</h1>
@@ -187,8 +223,8 @@ const YuiCallScreen = () => {
                         <div
                             key={index}
                             className={`p-3 rounded-xl max-w-[80%] ${msg.sender === "user"
-                                    ? "bg-indigo-600 ml-auto"
-                                    : "bg-gray-700"
+                                ? "bg-indigo-600 ml-auto"
+                                : "bg-gray-700"
                                 }`}
                         >
                             {msg.text}

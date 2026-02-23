@@ -28,3 +28,27 @@ dist-ssr
 
 __pycache__/
 *.pyc
+
+# ===============================
+# PYTHON VENV (VERY IMPORTANT)
+# ===============================
+venv/
+backend/venv/
+
+# ===============================
+# DATASETS (DO NOT PUSH HUGE DATA)
+# ===============================
+backend/AI_ENGINE/speech_model/dataset_audio_speech_actors_01-24/
+backend/AI_ENGINE/text_model/dataset/
+
+# optional if any extra dataset folders
+dataset/
+datasets/
+*.zip
+*.wav
+
+# ===============================
+# SYSTEM CACHE
+# ===============================
+*.DS_Store
+Thumbs.db
