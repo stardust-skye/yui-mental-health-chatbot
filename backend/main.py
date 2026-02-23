@@ -12,9 +12,11 @@ from datetime import datetime
 from huggingface_hub import InferenceClient
 from dotenv import load_dotenv
 import json
+from ai_routes import router as ai_router
 
 # 1. Initialize FastAPI & CORS
 app = FastAPI()
+app.include_router(ai_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # In production, replace with your frontend URL
@@ -273,7 +275,6 @@ async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks)
             "is_emergency": is_emergency,
             "detected_trigger": trigger
         }
-
 
     except Exception as e:
         print(f"Error: {e}")
