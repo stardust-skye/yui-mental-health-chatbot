@@ -1,80 +1,123 @@
-# 🌱 Yui — AI Mental Health Companion
+# 🌱 Yui — Emotion-Aware AI Mental Health Companion
 
-Yui (結 / 優) represents gentleness and emotional connection in Japanese.
+> *An emotionally intelligent AI system that listens, understands, and responds — across text, voice, and facial expression.*
 
-Yui is an AI-powered mental health assistant designed to help users reflect on their emotions, understand mood patterns, and build emotional awareness through calm, supportive interactions.
+Yui (結 / 優) represents gentleness, connection, and emotional harmony in Japanese.
 
+Yui is a full-stack AI mental health companion that integrates **multi-modal emotion detection (Speech + Face + Text)** with empathetic AI conversation to create a calm, supportive digital wellness space.
 
-## ✨ Features
+Unlike traditional chatbots, Yui does not just respond to words — it interprets emotional signals.
 
-### Emotion-Aware Chat
+---
 
-Therapeutic conversations powered by Gemini 2.5
+## 🚀 What Makes Yui Different?
 
-Detects emotions such as joy, sadness, anxiety, fear, and anger
+Yui combines **three independent emotion pipelines**:
 
-Responds with empathetic, non-judgmental support
+* 🎤 **Speech Emotion Recognition** (trained on RAVDESS dataset)
+* 👁 **Facial Emotion Recognition** (custom CNN model)
+* 💬 **Text Emotion Detection** (fine-tuned NLP model)
+* 🤖 **Context-Aware AI Response Generation** (Gemini 2.5)
 
-### Mood Analytics
+All signals are fused using priority logic:
 
-Daily mood detection from conversations
+```
+Text Emotion → Speech Emotion → Facial Emotion
+```
 
-Weekly mood trends and emotional trajectory visualizations
+## 🧩 Core Features
 
-Emotional spectrum scale (negative → positive)
+### 🎭 Multi-Modal Emotion Detection
 
-### Trigger Detection
+* Real-time facial emotion inference (CNN-based model)
+* Speech tone classification (Angry, Happy, Sad, Fearful, etc.)
+* NLP-based emotional intent detection
+* Confidence-based emotion filtering
 
-Identifies recurring emotional triggers
+---
 
-Helps users recognize emotional patterns over time
+### 💬 Emotion-Aware AI Conversations
 
-### Personalized Wellness Suggestions
+* Powered by Gemini 2.5
+* Generates short, human-like, empathetic responses
+* Emotion-conditioned prompt engineering
+* Non-judgmental and supportive tone
 
-Context-aware recommendations based on detected emotional state
+---
 
-Short, practical, and calming tips
+### 📊 Mood Analytics & Pattern Recognition
 
-### Guided Breathing Exercises
+* Conversation-based mood tracking
+* Weekly emotional trend visualization
+* Emotional polarity scale (negative → positive)
+* Pattern and trigger detection
 
-Mood-based breathing sessions (anxious, sad, overwhelmed, etc.)
+---
 
-Dynamic background music synced with inhale/exhale phases
+### 🌿 Wellness Toolkit
 
-### Calming Audio & Meditation Space
+* Guided breathing exercises with dynamic timing
+* Mood-based calming video/audio sessions
+* Focused grounding experiences
+* Minimalist and distraction-free UI
 
-Curated calming music categories
+---
 
-Designed for relaxation, grounding, and mindfulness
+## 🏗 System Architecture
 
+```
+Frontend (React + Tailwind)
+        ↓
+FastAPI Backend
+        ↓
+AI Engine
+   ├── Speech Model (CNN + Feature Extraction)
+   ├── Face Model (Custom CNN)
+   ├── Text Model (NLP)
+   └── Gemini API Integration
+        ↓
+Firebase (Auth + Firestore)
+```
 
-## 🛠 Tech Stack
+Yui is structured for scalability and modular AI experimentation.
 
-Frontend: React, Tailwind CSS
+---
 
-Backend: FastAPI (Python)
+## 🧪 Research & Model Training
 
-AI Model: Gemini 2.5
+**Speech model trained on:**
 
-Emotion Detection: DistilRoBERTa (Hugging Face)
+* RAVDESS Emotional Speech Dataset
 
-Database & Auth: Firebase Firestore
+**Face model:**
 
-Charts: Recharts
+* CNN architecture trained on facial emotion dataset
+* Confidence threshold filtering to reduce false positives
 
+**Text model:**
+
+* Emotion extraction and classification pipeline
+* Custom preprocessing and token filtering
+
+---
 
 ## ⚠️ Disclaimer
 
-Yui is not a replacement for professional mental health care or therapy.
-It is intended as a supportive self-reflection tool and should not be used for medical diagnosis or treatment.
+Yui is not a substitute for professional mental health care or therapy.
 
+It is designed as a reflective and supportive emotional awareness tool — not for diagnosis or crisis intervention.
 
-## 🎯 Goal
+If you are in immediate distress, please seek professional help.
 
-To create a calm, emotionally intelligent digital space that helps users:
+---
 
-Feel heard
+## 🎯 Vision
 
-Understand their emotions
+Yui explores the intersection of:
 
-Build healthier emotional habits
+* Artificial Intelligence
+* Emotional Computing
+* Human-Centered Design
+* Mental Wellness Technology
+
+The long-term goal is to build emotionally intelligent AI systems that support self-awareness, reflection, and digital well-being.
