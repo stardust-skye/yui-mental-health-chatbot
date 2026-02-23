@@ -15,6 +15,7 @@ import Dashboard from './components/Dashboard';
 import YuiOrb from "./components/YuiOrb";
 import Breathing from './components/Breathing';
 import Videos from './components/Videos';
+import YuiCallScreen from "./components/YuiCallScreen";
 
 
 // --- LANDING PAGE COMPONENT ---
@@ -223,6 +224,7 @@ function App() {
                     <nav className="flex-1 px-4 space-y-2 overflow-y-auto">
                       <SidebarLink to="/chat" icon={<MessageSquare size={20} />} label="Chat" isCollapsed={isCollapsed} />
                       <SidebarLink to="/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" isCollapsed={isCollapsed} />
+                      <SidebarLink to="/call" icon={<Brain size={20} />} label="Call Yui" isCollapsed={isCollapsed} />
 
                       <div className="pt-4 mt-4 border-t">
                         <Sidebar
@@ -304,6 +306,11 @@ function App() {
                     <Route
                       path="/videos"
                       element={<Videos />}
+                    />
+
+                    <Route
+                      path="/call"
+                      element={<YuiCallScreen />}
                     />
                   </Routes>
                 </div>
