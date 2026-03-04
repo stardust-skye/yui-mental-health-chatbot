@@ -5,3 +5,12 @@ firebase-admin
 pydantic
 python-dotenv
 huggingface_hub
+
+numpy
+opencv-python
+tensorflow
+joblib
+nltk
+librosa
+SpeechRecognition
+scikit-learn
