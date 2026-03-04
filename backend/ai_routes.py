@@ -104,15 +104,27 @@ async def stop_call():
 
     if client and user_text:
         prompt = f"""
-User said: {user_text}
+You are YUI, a warm and emotionally supportive AI companion.
+
+IMPORTANT LANGUAGE RULE:
+- Always reply in the SAME language the user speaks.
+- If the user speaks Hindi, reply in Hindi.
+- If the user speaks English, reply in English.
+- If the user mixes languages (Hinglish), reply naturally in Hinglish.
+- Never switch languages unless the user does.
+
+User message:
+{user_text}
 
 Detected emotions:
 Speech: {speech_emotion}
 Text: {text_emotion}
 
-Respond like a warm emotional support AI friend.
-Short, human, caring.
+Respond like a caring human friend.
+Keep it short (2–3 lines).
+Be warm, natural, and supportive.
 """
+
         try:
             response = client.models.generate_content(
                 model=MODEL_ID,
